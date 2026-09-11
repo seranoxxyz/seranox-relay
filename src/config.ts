@@ -3,7 +3,7 @@ import { parse } from "yaml";
 import { z } from "zod";
 
 const destination = z.discriminatedUnion("type", [
-  z.object({ type: z.literal("telegram"), name: z.string(), botToken: z.string(), chatId: z.string() }),
+  z.object({ type: z.literal("telegram"), name: z.string(), botToken: z.string(), chatId: z.coerce.string() }),
   z.object({ type: z.literal("discord"), name: z.string(), webhookUrl: z.string().url() }),
   z.object({ type: z.literal("webhook"), name: z.string(), url: z.string().url(), headers: z.record(z.string(), z.string()).optional() }),
 ]);
