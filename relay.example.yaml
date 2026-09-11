@@ -1,0 +1,33 @@
+# Seranox alert relay — copy to relay.yaml. ${ENV} placeholders are expanded.
+api:
+  baseUrl: ${SERANOX_API_URL}        # e.g. http://localhost:5173/api/v1
+  apiKey: ${SERANOX_API_KEY}         # optional for read-only rules
+  budgetSeraPerHour: 60              # credit guard for indexer calls (utility #13)
+
+pollSeconds: 30
+throttlePerMinute: 20                # per destination — relay seats are throttled (utility #6)
+quietHours: { start: "02:00", end: "06:00" }
+
+destinations:
+  - { type: telegram, name: tg, botToken: ${TELEGRAM_BOT_TOKEN}, chatId: ${TELEGRAM_CHAT_ID} }
+  - { type: discord, name: dc, webhookUrl: ${DISCORD_WEBHOOK_URL} }
+  - { type: webhook, name: hook, url: https://example.com/seranox }
+
+rules:
+  - kind: new_pair
+    name: clean-launches
+    to: [tg, dc]
+    risk: [clean]
+    minLiquidityUsd: 50000
+    maxAgeMin: 15
+    maxTop10Pct: 40
+  - kind: wallet_trade
+    name: night-owl
+    to: [tg]
+    wallets: [night_owl.eth, quiet_size]
+    minAmountUsd: 5000
+  - kind: dislocation
+    name: overnight-gap
+    to: [dc, hook]
+    tickers: [TSLA, HOOD, COIN]
+    minAbsSpreadPct: 2

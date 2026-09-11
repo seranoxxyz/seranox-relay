@@ -1,0 +1,53 @@
+{
+  "name": "@seranox/relay",
+  "version": "0.1.0",
+  "description": "Self-hosted Seranox alert relay: YAML rules for new pairs, tracked-wallet trades, and equities dislocation → Telegram, Discord, or webhooks, with dedupe, per-seat throttling, and quiet hours.",
+  "license": "MIT",
+  "homepage": "https://seranox.xyz",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seranoxxyz/seranox-relay.git"
+  },
+  "author": "Seranox",
+  "type": "module",
+  "bin": {
+    "seranox-relay": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsx src/index.ts --config relay.example.yaml --once --dry-run"
+  },
+  "keywords": [
+    "seranox",
+    "sera",
+    "alerts",
+    "telegram",
+    "discord",
+    "robinhood-chain"
+  ],
+  "packageManager": "pnpm@11.8.0",
+  "dependencies": {
+    "@seranox/sdk": "file:../seranox-sdk",
+    "yaml": "^2.9.0",
+    "zod": "^4.6.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.20.2",
+    "eslint": "^10.10.0",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.13",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.70.0",
+    "vitest": "^5.0.0"
+  }
+}
