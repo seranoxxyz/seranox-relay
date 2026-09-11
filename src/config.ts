@@ -47,6 +47,20 @@ export const configSchema = z.object({
   rules: z.array(rule).min(1),
 });
 
+/** Unset `${ENV}` placeholders become "" / null in YAML — treat them as absent. */
+function stripEmpty(v: unknown): unknown {
+  if (Array.isArray(v)) return v.map(stripEmpty);
+  if (v && typeof v === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, val] of Object.entries(v as Record<string, unknown>)) {
+      if (val === "" || val === null || val === undefined) continue;
+      out[k] = stripEmpty(val);
+    }
+    return out;
+  }
+  return v;
+}
+
 export type RelayConfig = z.infer<typeof configSchema>;
 export type Rule = RelayConfig["rules"][number];
 export type Destination = RelayConfig["destinations"][number];
@@ -54,7 +68,7 @@ export type Destination = RelayConfig["destinations"][number];
 /** `${ENV_VAR}` placeholders are expanded so secrets stay out of the YAML. */
 export function loadConfig(path: string, env: NodeJS.ProcessEnv = process.env): RelayConfig {
   const raw = readFileSync(path, "utf8").replace(/\$\{([A-Z0-9_]+)\}/g, (_, k: string) => env[k] ?? "");
-  const cfg = configSchema.parse(parse(raw));
+  const cfg = configSchema.parse(stripEmpty(parse(raw)));
   const names = new Set(cfg.destinations.map((d) => d.name));
   for (const r of cfg.rules) for (const t of r.to) if (!names.has(t)) throw new Error(`Rule "${r.name}" targets unknown destination "${t}".`);
   return cfg;
