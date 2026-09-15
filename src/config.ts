@@ -37,7 +37,7 @@ const rule = z.discriminatedUnion("kind", [
 ]);
 
 export const configSchema = z.object({
-  api: z.object({ baseUrl: z.string().default("https://app.seranox.xyz/api/v1"), apiKey: z.string().optional(), budgetSeraPerHour: z.number().default(60) }).prefault({}),
+  api: z.object({ baseUrl: z.string().default("https://dapp.seranox.xyz/api/v1"), apiKey: z.string().optional(), budgetSeraPerHour: z.number().default(60) }).prefault({}),
   pollSeconds: z.number().min(5).default(30),
   /** Max messages per destination per minute (whitepaper #6: relay seats are throttled). */
   throttlePerMinute: z.number().default(20),
